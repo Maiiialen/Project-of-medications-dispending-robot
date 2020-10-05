@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">RobotDoWydawaniaLekow</string>
+    <string name="settings">Ustawienia</string>
+    <string name="full_list">Pełna lista</string>
+</resources>
