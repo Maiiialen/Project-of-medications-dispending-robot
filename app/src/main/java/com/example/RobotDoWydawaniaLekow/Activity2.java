@@ -16,7 +16,7 @@ public class Activity2 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_2);
 
-        getSupportActionBar().setTitle("Activity2");
+        getSupportActionBar().setTitle("Wszystkie alarmy");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         listView1 = (ListView) findViewById(R.id.listview1);

@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getSupportActionBar().setTitle("MainActivity");
+        getSupportActionBar().setTitle("Strona główna");
 
         listView = (ListView) findViewById(R.id.listview);
         ArrayList<String> arrayList = new ArrayList<>();
