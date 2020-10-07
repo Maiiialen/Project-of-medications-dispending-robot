@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "484510134871",
+    "firebase_url": "https://robotdowydawanialekow.firebaseio.com",
+    "project_id": "robotdowydawanialekow",
+    "storage_bucket": "robotdowydawanialekow.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:484510134871:android:e8daeec69759cd6376a912",
+        "android_client_info": {
+          "package_name": "com.example.ugh"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "484510134871-lf6ts5mrgfg7gj701dg8kupv38baenus.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ugh",
+            "certificate_hash": "0902c5e57827a5871abfea7b2b940e7e14b95b6b"
+          }
+        },
+        {
+          "client_id": "484510134871-ikpul0totkm7sfturemkequkmi3vf96n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCICp0viFGL_U9hsIYklmmeyksN69onkQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "484510134871-ikpul0totkm7sfturemkequkmi3vf96n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
