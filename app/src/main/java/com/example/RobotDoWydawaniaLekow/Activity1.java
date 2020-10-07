@@ -36,8 +36,6 @@ public class Activity1 extends AppCompatActivity implements AdapterView.OnItemSe
         // łączenie z bazą danych
         przesyl_ustawien = new Przesyl_ustawien();
         reff = FirebaseDatabase.getInstance().getReference().child("Przesyl_ustawien");
-
-
     }
 
     public void openActivity1(){
@@ -52,7 +50,7 @@ public class Activity1 extends AppCompatActivity implements AdapterView.OnItemSe
         // przesłanie danego ustawienia
         int ilosc = Integer.parseInt(text.trim());
         przesyl_ustawien.setIlosc(ilosc);
-        reff.child("Ustawienia").setValue(przesyl_ustawien);
+        reff.setValue(przesyl_ustawien);
 
 
         if(adapterView.getItemAtPosition(i).toString() == "1"){
