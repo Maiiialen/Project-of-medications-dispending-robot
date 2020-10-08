@@ -2,6 +2,7 @@
     <string name="app_name">RobotDoWydawaniaLekow</string>
     <string name="settings">Ustawienia</string>
     <string name="full_list">Pełna lista</string>
+    <string name="textView">Ostatnie alarmy</string>
     
     <string-array name="ilosc">
         <item>1</item>

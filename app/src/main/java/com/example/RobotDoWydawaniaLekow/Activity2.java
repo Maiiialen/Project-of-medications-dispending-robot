@@ -18,10 +18,16 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class Activity2 extends AppCompatActivity {
-    ListView listView1;
     DatabaseReference reff;
-    String liczba;
-    Boolean test = false;
+    ListView listView1;
+    ArrayList<String> arrayList = new ArrayList<>();
+    String dzien;
+    String miesiac;
+    String rok;
+    String godziny;
+    String minuty;
+    Long ilosc;
+    String temp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,13 +37,24 @@ public class Activity2 extends AppCompatActivity {
         getSupportActionBar().setTitle("Wszystkie alarmy");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        reff = FirebaseDatabase.getInstance().getReference().child("Przesyl_ustawien");
+        reff = FirebaseDatabase.getInstance().getReference().child("Dane");
         reff.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                liczba = snapshot.child("ilosc").getValue().toString();
-                test = true;
-                dodajNaListe();
+                ilosc = snapshot.getChildrenCount();
+                for(long i = ilosc.longValue(); i > ilosc-20 && i > 0; --i){
+                    temp = "" + i;
+                    dzien = snapshot.child("dane" + temp).child("dzien").getValue().toString();
+                    miesiac = snapshot.child("dane" + temp).child("miesiac").getValue().toString();
+                    rok = snapshot.child("dane" + temp).child("rok").getValue().toString();
+                    godziny = snapshot.child("dane" + temp).child("godziny").getValue().toString();
+                    minuty = snapshot.child("dane" + temp).child("minuty").getValue().toString();
+                    if(miesiac.length()==1)
+                        miesiac = "0"+miesiac;
+                    if(minuty.length()==1)
+                        minuty = "0"+minuty;
+                    dodajNaListe();
+                }
             }
 
             @Override
@@ -50,8 +67,8 @@ public class Activity2 extends AppCompatActivity {
 
     public void dodajNaListe() {
         listView1 = (ListView) findViewById(R.id.listview1);
-        ArrayList<String> arrayList = new ArrayList<>();
-        arrayList.add(0, liczba);
+        arrayList.add(dzien+"."+miesiac+"."+rok+", "+godziny+":"+minuty);
+        //Log.d("nanana", "-------------------------");
         ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, arrayList);
         listView1.setAdapter(arrayAdapter);
     }

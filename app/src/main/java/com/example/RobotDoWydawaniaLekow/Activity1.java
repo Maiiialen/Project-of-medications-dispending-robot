@@ -35,7 +35,7 @@ public class Activity1 extends AppCompatActivity implements AdapterView.OnItemSe
 
         // łączenie z bazą danych
         przesyl_ustawien = new Przesyl_ustawien();
-        reff = FirebaseDatabase.getInstance().getReference().child("Przesyl_ustawien");
+        reff = FirebaseDatabase.getInstance().getReference().child("Ustawienia");
     }
 
     public void openActivity1(){
