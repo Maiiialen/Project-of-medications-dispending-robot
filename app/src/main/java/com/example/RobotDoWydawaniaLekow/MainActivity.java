@@ -11,8 +11,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -20,20 +22,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     DatabaseReference reff;
-    Wyswietlanie_danych wys;
+    DatabaseReference reffUstawienia;
+    String iloscPozostalychDawek;
+    TextView iloscDawek;
     ListView listView;
     ArrayList<String> arrayList = new ArrayList<>();
-    //Date currentTime = Calendar.getInstance().getTime();
-    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
-    String currentDateandTime = sdf.format(new Date());
+    Button fullList;
     String dzien;
     String miesiac;
     String rok;
@@ -47,36 +45,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getSupportActionBar().setTitle("Strona główna");
+        //przypisanie przycisku do zmiennej
+        fullList = (Button) findViewById(R.id.button_fullList);
+        iloscDawek = (TextView) findViewById(R.id.textiloscDawek);
 
-        /*listView = (ListView) findViewById(R.id.listview);
-        ArrayList<String> arrayList = new ArrayList<>();
-        arrayList.add("one");
-        arrayList.add("two");
-        arrayList.add("three");
-        arrayList.add(currentDateandTime);
-        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, arrayList);
-        listView.setAdapter(arrayAdapter);*/
+        // ustawianie tytułu
+        getSupportActionBar().setTitle(getString(R.string.mainPage));
 
-        /*// łączenie z bazą danych
-        wys = new Wyswietlanie_danych();
-        reff = FirebaseDatabase.getInstance().getReference().child("Dane").child("dane1");
-        // przesłanie danego ustawienia
-        int dzien = Integer.parseInt("5".trim());
-        wys.setDzien(dzien);
-        reff.setValue(wys);
-        int miesiac = Integer.parseInt("9".trim());
-        wys.setMiesiac(miesiac);
-        reff.setValue(wys);
-        int rok = Integer.parseInt("2020".trim());
-        wys.setRok(rok);
-        reff.setValue(wys);
-        int godzina = Integer.parseInt("15".trim());
-        wys.setGodziny(godzina);
-        reff.setValue(wys);
-        int minuty = Integer.parseInt("18".trim());
-        wys.setMinuty(minuty);
-        reff.setValue(wys);*/
+        // łączenie z bazą i zczytanie z niej danych
+        reffUstawienia = FirebaseDatabase.getInstance().getReference().child("Ustawienia");
+        reffUstawienia.addValueEventListener(new ValueEventListener() {
+             @Override
+             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                 try{
+                    iloscPozostalychDawek = snapshot.child("iloscPozostalychDawek").getValue().toString();
+                 } catch (Exception e) {}
+                 dodajIloscDawek();
+             }
+
+             @Override
+                public void onCancelled(@NonNull DatabaseError error) {}
+         });
 
         reff = FirebaseDatabase.getInstance().getReference().child("Dane");
         reff.addValueEventListener(new ValueEventListener() {
@@ -99,19 +88,22 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError error) {}
+        });
 
+        fullList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openActivity1();
             }
         });
     }
 
+    // obsuguje przechodzenie do innych kart z przycisków ukrytych pod "3 kropkami" w prawym górnym rogu
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == R.id.settings){
             openActivity();
-        }
-        if(item.getItemId() == R.id.full_list){
-            openActivity1();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -126,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    // utworzenie "3 kropek" w prawym górnym rogu i ich funkcjonalności
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -133,11 +126,17 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    // dodanie zczytanych elementów na listę
     public void dodajNaListe() {
         listView = (ListView) findViewById(R.id.listview);
         arrayList.add(dzien+"."+miesiac+"."+rok+", "+godziny+":"+minuty);
         //Log.d("nanana", "-------------------------");
         ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, arrayList);
         listView.setAdapter(arrayAdapter);
+    }
+
+    // dodanie zczytanych elementów na listę
+    public void dodajIloscDawek() {
+        iloscDawek.setText(iloscPozostalychDawek + "/14");
     }
 }

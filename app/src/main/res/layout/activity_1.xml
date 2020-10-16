@@ -19,7 +19,8 @@
         android:layout_marginRight="20dp"
         android:layout_toStartOf="@+id/spinner_dawki"
         android:layout_toLeftOf="@+id/spinner_dawki"
-        android:text="Dzienna ilość dawek" />
+        android:text="@string/ustawienia1"
+        android:textColor="#000000" />
 
     <TextView
         android:id="@+id/tekst_godziny1"
@@ -34,7 +35,8 @@
         android:layout_marginRight="20dp"
         android:layout_toStartOf="@+id/spinner_godzina1"
         android:layout_toLeftOf="@+id/spinner_godzina1"
-        android:text="Godzina alarmu pierwszego" />
+        android:text="@string/ustawienia2"
+        android:textColor="#000000"  />
 
     <TextView
         android:id="@+id/tekst_godziny2"
@@ -49,7 +51,8 @@
         android:layout_marginRight="20dp"
         android:layout_toStartOf="@+id/spinner_godzina2"
         android:layout_toLeftOf="@+id/spinner_godzina2"
-        android:text="Godzina alarmu drugiego (opcjonalne)" />
+        android:text="@string/ustawienia3"
+        android:textColor="#000000"  />
 
     <TextView
         android:id="@+id/tekst_godziny3"
@@ -64,11 +67,27 @@
         android:layout_marginRight="20dp"
         android:layout_toStartOf="@+id/spinner_godzina3"
         android:layout_toLeftOf="@+id/spinner_godzina3"
-        android:text="Godzina alarmu trzeciego (opcjonalne)" />
+        android:text="@string/ustawienia4"
+        android:textColor="#000000"  />
+
+    <TextView
+        android:id="@+id/pozostaleDawki"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:layout_below="@+id/tekst_godziny3"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_toStartOf="@+id/spinner_dawki"
+        android:layout_toLeftOf="@+id/spinner_dawki"
+        android:text="@string/ileDawek"
+        android:textColor="#000000" />
 
     <Spinner
         android:id="@+id/spinner_dawki"
-        android:layout_width="100dp"
+        android:layout_width="105dp"
         android:layout_height="25dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
@@ -80,7 +99,7 @@
 
     <Spinner
         android:id="@+id/spinner_godzina1"
-        android:layout_width="100dp"
+        android:layout_width="105dp"
         android:layout_height="25dp"
         android:layout_below="@+id/spinner_dawki"
         android:layout_alignParentEnd="true"
@@ -93,7 +112,7 @@
 
     <Spinner
         android:id="@+id/spinner_godzina2"
-        android:layout_width="100dp"
+        android:layout_width="105dp"
         android:layout_height="25dp"
         android:layout_below="@+id/spinner_godzina1"
         android:layout_alignParentEnd="true"
@@ -106,7 +125,7 @@
 
     <Spinner
         android:id="@+id/spinner_godzina3"
-        android:layout_width="100dp"
+        android:layout_width="105dp"
         android:layout_height="25dp"
         android:layout_below="@+id/spinner_godzina2"
         android:layout_alignParentEnd="true"
@@ -116,6 +135,50 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp" />
+
+    <TextView
+        android:id="@+id/textViewiloscDawek"
+        android:layout_width="95dp"
+        android:layout_height="25dp"
+        android:layout_below="@+id/spinner_godzina3"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        android:text="@string/ilosc"
+        android:textColor="#000000" />
+
+    <Button
+        android:id="@+id/buttonSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="30dp"
+        android:text="@string/bottonZapisz" />
+
+
+    <Button
+        android:id="@+id/buttonUzupelnienie"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginBottom="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_toStartOf="@+id/buttonSave"
+        android:layout_toLeftOf="@+id/buttonSave"
+        android:text="@string/uzupelnienie" />
 
 
 </RelativeLayout>

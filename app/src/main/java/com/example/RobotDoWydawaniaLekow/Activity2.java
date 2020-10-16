@@ -34,9 +34,11 @@ public class Activity2 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_2);
 
-        getSupportActionBar().setTitle("Wszystkie alarmy");
+        // ustawianie tytułu i strzałki powrotu
+        getSupportActionBar().setTitle(getString(R.string.full_list));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        // łączenie z bazą i zczytanie z niej danych
         reff = FirebaseDatabase.getInstance().getReference().child("Dane");
         reff.addValueEventListener(new ValueEventListener() {
             @Override
@@ -63,8 +65,10 @@ public class Activity2 extends AppCompatActivity {
             }
         });
 
+
     }
 
+    // dodanie zczytanych elementów na listę
     public void dodajNaListe() {
         listView1 = (ListView) findViewById(R.id.listview1);
         arrayList.add(dzien+"."+miesiac+"."+rok+", "+godziny+":"+minuty);
