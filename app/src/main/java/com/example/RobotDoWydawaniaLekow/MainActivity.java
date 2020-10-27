@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         reff.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                ilosc = snapshot.getChildrenCount();
+                ilosc = snapshot.getChildrenCount()-1;
                 for(long i = ilosc.longValue(); i > ilosc-3; --i){
                     temp = "" + i;
                     dzien = snapshot.child("dane" + temp).child("dzien").getValue().toString();
