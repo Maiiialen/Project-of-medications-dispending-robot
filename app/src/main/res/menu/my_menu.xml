@@ -7,10 +7,5 @@
         android:title="@string/settings"
         app:showAsAction = "never"
         />
-    <item
-        android:id="@+id/full_list"
-        android:title="@string/full_list"
-        app:showAsAction = "never"
-        />
 
 </menu>
