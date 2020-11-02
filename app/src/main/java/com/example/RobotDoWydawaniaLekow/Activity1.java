@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -24,6 +25,9 @@ public class Activity1 extends AppCompatActivity implements AdapterView.OnItemSe
     Przesyl_ustawien przesyl_ustawien;
     Button buttonSave;
     String iloscPozostalychDawek;
+    String procent;
+    TextView iloscDawek;
+    TextView iloscProcent;
     String ilosc;
     String godziny1;
     String godziny2;
@@ -52,6 +56,8 @@ public class Activity1 extends AppCompatActivity implements AdapterView.OnItemSe
         spinerGodziny1 = findViewById(R.id.spinner_godzina1);
         spinerGodziny2 = findViewById(R.id.spinner_godzina2);
         spinerGodziny3 = findViewById(R.id.spinner_godzina3);
+        iloscDawek = (TextView) findViewById(R.id.textViewiloscDawek);
+        iloscProcent = (TextView) findViewById(R.id.procenty);
 
         // utworzenie adapterów
         adapter_dawki = ArrayAdapter.createFromResource(this, R.array.ilosc, android.R.layout.simple_spinner_item);
@@ -83,6 +89,7 @@ public class Activity1 extends AppCompatActivity implements AdapterView.OnItemSe
                 try {
                     //Log.d("przed", "----------");
                     iloscPozostalychDawek = snapshot.child("iloscPozostalychDawek").getValue().toString();
+                    procent = snapshot.child("poziomBaterii").getValue().toString();
                     ilosc = snapshot.child("ilosc").getValue().toString();
                     godziny1 = snapshot.child("godziny1").getValue().toString();
                     godziny2 = snapshot.child("godziny2").getValue().toString();
@@ -135,6 +142,8 @@ public class Activity1 extends AppCompatActivity implements AdapterView.OnItemSe
         spinerGodziny1.setSelection(adapter_godziny1.getPosition(godziny1));
         spinerGodziny2.setSelection(adapter_godziny2.getPosition(godziny2));
         spinerGodziny3.setSelection(adapter_godziny3.getPosition(godziny3));
+        iloscDawek.setText(iloscPozostalychDawek + "/14");
+        iloscProcent.setText(procent + "%");
     }
 
     public void openActivity1(){

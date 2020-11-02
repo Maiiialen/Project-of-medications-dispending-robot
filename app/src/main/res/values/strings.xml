@@ -12,6 +12,8 @@
     <string name="bottonZapisz">Zapisz</string>
     <string name="ileDawek">Ilość pozostałych dawek: </string>
     <string name="ilosc">12/14</string>
+    <string name="ileProcent">Poziom naładowania baterii: </string>
+    <string name="procenty">100%</string>
 
     <string-array name="ilosc">
         <item>1</item>

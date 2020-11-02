@@ -28,6 +28,8 @@ void kiedyWcisniety();
 void wifiConnect();
 void przesylNowychDanych();
 void pobranieNastepnegoAlarmu();
+void wysylIlosciDawek();
+void wysylPoziomuBaterii();
 
 void setup() {
   // do testu --------
@@ -95,8 +97,10 @@ void setup() {
   pobranieNastepnegoAlarmu();
 
   // zmiejszenie ilości dostępnych dawek leków o 1
-  int pozostaleDawki = Firebase.getInt("/Ustawienia/iloscPozostalychDawek")-1;
-  Firebase.setInt("/Ustawienia/iloscPozostalychDawek", pozostaleDawki);
+  wysylIlosciDawek();
+
+  // wysłanie poziomu baterii
+  wysylPoziomuBaterii();
 }
 
 void loop() {
@@ -178,7 +182,17 @@ void przesylNowychDanych(){
   Firebase.setInt("/Dane/"+nazwa+"/godziny", 14);
   Firebase.setInt("/Dane/"+nazwa+"/minuty", 56);
   Firebase.setInt("/Dane/iloscDanych", iloscDanych);
-  
+}
+
+void wysylIlosciDawek(){
+  int pozostaleDawki = Firebase.getInt("/Ustawienia/iloscPozostalychDawek")-1;
+  Firebase.setInt("/Ustawienia/iloscPozostalychDawek", pozostaleDawki);
+}
+
+void wysylPoziomuBaterii(){
+  int iloscDanych = Firebase.getInt("/Ustawienia/poziom") + 1;
+  //Firebase.setInt("/Ustawienia/poziom", analogRead(A0)*100/1023);
+  Firebase.setInt("/Ustawienia/poziom", 20);            // do testu -------------
 }
 
 

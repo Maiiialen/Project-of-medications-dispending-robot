@@ -28,7 +28,9 @@ public class MainActivity extends AppCompatActivity {
     DatabaseReference reff;
     DatabaseReference reffUstawienia;
     String iloscPozostalychDawek;
+    String procent;
     TextView iloscDawek;
+    TextView iloscProcent;
     ListView listView;
     ArrayList<String> arrayList = new ArrayList<>();
     Button fullList;
@@ -48,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         //przypisanie przycisku do zmiennej
         fullList = (Button) findViewById(R.id.button_fullList);
         iloscDawek = (TextView) findViewById(R.id.textiloscDawek);
+        iloscProcent = (TextView) findViewById(R.id.textiloscProcent);
 
         // ustawianie tytułu
         getSupportActionBar().setTitle(getString(R.string.mainPage));
@@ -58,7 +61,8 @@ public class MainActivity extends AppCompatActivity {
              @Override
              public void onDataChange(@NonNull DataSnapshot snapshot) {
                  try{
-                    iloscPozostalychDawek = snapshot.child("iloscPozostalychDawek").getValue().toString();
+                     iloscPozostalychDawek = snapshot.child("iloscPozostalychDawek").getValue().toString();
+                     procent = snapshot.child("poziomBaterii").getValue().toString();
                  } catch (Exception e) {}
                  dodajIloscDawek();
              }
@@ -127,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // dodanie zczytanych elementów na listę
-    public void dodajNaListe() {
+    public void dodajNaListe(){
         listView = (ListView) findViewById(R.id.listview);
         arrayList.add(dzien+"."+miesiac+"."+rok+", "+godziny+":"+minuty);
         //Log.d("nanana", "-------------------------");
@@ -136,7 +140,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // dodanie zczytanych elementów na listę
-    public void dodajIloscDawek() {
+    public void dodajIloscDawek(){
         iloscDawek.setText(iloscPozostalychDawek + "/14");
+        iloscProcent.setText(procent + "%");
     }
 }
