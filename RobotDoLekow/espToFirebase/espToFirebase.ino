@@ -192,7 +192,7 @@ void wysylIlosciDawek(){
 void wysylPoziomuBaterii(){
   int iloscDanych = Firebase.getInt("/Ustawienia/poziom") + 1;
   //Firebase.setInt("/Ustawienia/poziom", analogRead(A0)*100/1023);
-  Firebase.setInt("/Ustawienia/poziom", 20);            // do testu -------------
+  Firebase.setInt("/Ustawienia/poziomBaterii", 20);            // do testu -------------
 }
 
 
