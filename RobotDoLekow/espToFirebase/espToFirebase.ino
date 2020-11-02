@@ -1,98 +1,108 @@
 #include <ESP8266WiFi.h>
 #include <FirebaseArduino.h>
 #include <Wire.h>
-//#include "DS1307.h"
-//#include "PCF8574.h"
+#include <Stepper.h>
+#include "DS1307.h"
+#include "PCF8574.h"
 
 #define WIFI_NAZWA "DESKTOP"
 #define WIFI_HASLO "m&k$0001"
 #define FIREBASE_BAZA "robotdowydawanialekow.firebaseio.com"
 #define FIREBASE_KLUCZ "HHdjaAsoNlfx7vMf7ht73WEzNGa7KK5TtcRbN9uy"
 
-#define CZAS_SPANIA 3600                              //CZAS_SPANIA to czas sekund jednego cyklu spania - docelowo godzina 60*60 = 3600 sekund
+#define CZAS_SPANIA 3600        //CZAS_SPANIA to czas sekund jednego cyklu spania - docelowo godzina 60*60 = 3600 sekund
 
-//DS1307 zegar;
-//PCF8674 ekspander;
+DS1307 zegar;
+PCF8574 ekspander(0x20);
 
 typedef struct {
   int nastepnyAlarm;
 } skladowanie_RTC;
 
 skladowanie_RTC pamiec_RTC;
-//int obecnaGodzina;
+int obecnaGodzina;
+
+void spanie();
+void ruchSilnika();
+void kiedyWcisniety();
+void wifiConnect();
+void przesylNowychDanych();
+void pobranieNastepnegoAlarmu();
 
 void setup() {
   // do testu --------
   //pamiec_RTC.nastepnyAlarm = 23;
   
   // inicjalizacja ekspandera
-  //ekspander.begin(0x20);    //A0, A1, A2 równe 0
+  ekspander.begin();    //A0, A1, A2 równe 0
   
   // inicjalizacja zegara i pobranie obecnej godziny
-  //zegar.begin();
-  //obecnaGodzina = zegar.hour + zegar.minute/60; //pobranie obecnej godziny z RTC
+  zegar.begin();
+  obecnaGodzina = zegar.hour + zegar.minute/60; //pobranie obecnej godziny z RTC
 
   pinMode(A0, INPUT);
-  ekspander.pinMode(D1, OUTPUT);      // do I2C
-  ekspander.digitalWrite(D1, HIGH);
-  ekspander.pinMode(D2, OUTPUT);      // do I2C
-  ekspander.digitalWrite(D2, HIGH);
+
+  // to chyba niepotrzebne? ----------
+  //pinMode(D1, OUTPUT);      // do I2C
+  //digitalWrite(D1, HIGH);
+  //pinMode(D2, OUTPUT);      // do I2C
+  //digitalWrite(D2, HIGH);
   
   ekspander.pinMode(0, OUTPUT);       // buzzer
   ekspander.digitalWrite(0, HIGH);
   ekspander.pinMode(1, OUTPUT);       // dioda
   ekspander.digitalWrite(1, HIGH);
   ekspander.pinMode(2, INPUT);        // przycisk
-  ekspander.pinMode(3, OUTPUT);       // IN1 silnik
-  ekspander.digitalWrite(3, LOW);
-  ekspander.pinMode(4, OUTPUT);       // IN2
+  
+  ekspander.pinMode(4, OUTPUT);       // IN1 silnik
   ekspander.digitalWrite(4, LOW);
-  ekspander.pinMode(5, OUTPUT);       // IN3
+  ekspander.pinMode(5, OUTPUT);       // IN2
   ekspander.digitalWrite(5, LOW);
-  ekspander.pinMode(6, OUTPUT);       // IN4
+  ekspander.pinMode(6, OUTPUT);       // IN3
   ekspander.digitalWrite(6, LOW);
+  ekspander.pinMode(7, OUTPUT);       // IN4
+  ekspander.digitalWrite(7, LOW);
   
   // spanie jeśli czekamy na alarm
-  //spanie();
+  spanie();
+  
   
   // ruch silnikiem krokowym X
+  ruchSilnika();
   
   // zasilenie buzzera i diody w przycisku
-  delay(2000);
-  //digitalWrite(1, LOW);
-  digitalWrite(2, LOW);
-
-  delay(2000);
+  ekspander.digitalWrite(0, HIGH);
+  ekspander.digitalWrite(1, HIGH);
   
   // zczytywanie kiedy wciśnięty zostanie przycisk
-  //kiedyWcisniety();   // moze do poprawienia? ---------
+  kiedyWcisniety();   // moze do poprawienia? ---------
   
-  // wyłączeine buzzera i diody X
-  //digitalWrite(1, HIGH);
-  digitalWrite(2, HIGH);
+  // wyłączeine buzzera i diody
+  ekspander.digitalWrite(0, LOW);
+  ekspander.digitalWrite(1, LOW);
 
   // łączenie z wifi
-  //wifiConnect();
+  wifiConnect();
 
   // łączenie z firebase
-  //Firebase.begin(FIREBASE_BAZA, FIREBASE_KLUCZ);
-  //delay(100);
+  Firebase.begin(FIREBASE_BAZA, FIREBASE_KLUCZ);
+  delay(100);
   
   // przesył danych do bazy
-  //przesylNowychDanych();
+  przesylNowychDanych();
 
   // pobieranie ustawień na następny alarm
-  //pobranieNastepnegoAlarmu();
+  pobranieNastepnegoAlarmu();
 
   // zmiejszenie ilości dostępnych dawek leków o 1
-  //int pozostaleDawki = Firebase.getInt("/Ustawienia/iloscPozostalychDawek")-1;
-  //Firebase.setInt("/Ustawienia/iloscPozostalychDawek", pozostaleDawki);
+  int pozostaleDawki = Firebase.getInt("/Ustawienia/iloscPozostalychDawek")-1;
+  Firebase.setInt("/Ustawienia/iloscPozostalychDawek", pozostaleDawki);
 }
 
 void loop() {
 
 }
-/*
+
 void spanie(){
   if(abs(pamiec_RTC.nastepnyAlarm - obecnaGodzina) > 1) {                 // godzina spania
     ESP.deepSleep(CZAS_SPANIA * 1e6);
@@ -106,21 +116,46 @@ void spanie(){
     ESP.deepSleep(0.16 * CZAS_SPANIA * 1e6);
   } else if(abs(pamiec_RTC.nastepnyAlarm - obecnaGodzina) > 0.08) {       // ok 5 min spania
     ESP.deepSleep(0.08 * CZAS_SPANIA * 1e6);
+  }
+}
+
+void ruchSilnika(){
+  for(int i=0; i<128; ++i){
+    ekspander.digitalWrite(4, HIGH);
+    ekspander.digitalWrite(5, HIGH);
+    ekspander.digitalWrite(6, LOW);
+    ekspander.digitalWrite(7, LOW);
+    
+    ekspander.digitalWrite(4, LOW);
+    ekspander.digitalWrite(5, HIGH);
+    ekspander.digitalWrite(6, HIGH);
+    ekspander.digitalWrite(7, LOW);
+    
+    ekspander.digitalWrite(4, LOW);
+    ekspander.digitalWrite(5, LOW);
+    ekspander.digitalWrite(6, HIGH);
+    ekspander.digitalWrite(7, HIGH);
+    
+    ekspander.digitalWrite(4, HIGH);
+    ekspander.digitalWrite(5, LOW);
+    ekspander.digitalWrite(6, LOW);
+    ekspander.digitalWrite(7, HIGH);
+  }
 }
 
 void kiedyWcisniety(){
   while(1){
-    if(digitalRead(3)){    // czy chce odczytać 1 czy 0?
+    if(ekspander.digitalRead(2)){    // czy chce odczytać 1 czy 0?
       break;
     }
   }
 }
 
-void wifiConnect() {
+void wifiConnect(){
   WiFi.begin(WIFI_NAZWA, WIFI_HASLO);
 
   int teller = 0;
-  while (WiFi.status() != WL_CONNECTED) {
+  while(WiFi.status() != WL_CONNECTED){
     delay(1000);
   }
 }
@@ -199,4 +234,3 @@ void pobranieNastepnegoAlarmu(){
     }
   }
 }
-*/
