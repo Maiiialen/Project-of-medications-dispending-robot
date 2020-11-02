@@ -2,6 +2,7 @@
 #include <FirebaseArduino.h>
 #include <Wire.h>
 //#include "DS1307.h"
+//#include "PCF8574.h"
 
 #define WIFI_NAZWA "DESKTOP"
 #define WIFI_HASLO "m&k$0001"
@@ -11,23 +12,88 @@
 #define CZAS_SPANIA 3600                              //CZAS_SPANIA to czas sekund jednego cyklu spania - docelowo godzina 60*60 = 3600 sekund
 
 //DS1307 zegar;
+//PCF8674 ekspander;
 
 typedef struct {
   int nastepnyAlarm;
 } skladowanie_RTC;
 
 skladowanie_RTC pamiec_RTC;
-
 //int obecnaGodzina;
 
 void setup() {
-  Serial.begin(9600);
-  pinMode(2, OUTPUT);
+  // do testu --------
+  //pamiec_RTC.nastepnyAlarm = 23;
+  
+  // inicjalizacja ekspandera
+  //ekspander.begin(0x20);    //A0, A1, A2 równe 0
+  
+  // inicjalizacja zegara i pobranie obecnej godziny
   //zegar.begin();
-  pamiec_RTC.nastepnyAlarm = 23;
   //obecnaGodzina = zegar.hour + zegar.minute/60; //pobranie obecnej godziny z RTC
-/*
+
+  pinMode(A0, INPUT);
+  ekspander.pinMode(D1, OUTPUT);      // do I2C
+  ekspander.digitalWrite(D1, HIGH);
+  ekspander.pinMode(D2, OUTPUT);      // do I2C
+  ekspander.digitalWrite(D2, HIGH);
+  
+  ekspander.pinMode(0, OUTPUT);       // buzzer
+  ekspander.digitalWrite(0, HIGH);
+  ekspander.pinMode(1, OUTPUT);       // dioda
+  ekspander.digitalWrite(1, HIGH);
+  ekspander.pinMode(2, INPUT);        // przycisk
+  ekspander.pinMode(3, OUTPUT);       // IN1 silnik
+  ekspander.digitalWrite(3, LOW);
+  ekspander.pinMode(4, OUTPUT);       // IN2
+  ekspander.digitalWrite(4, LOW);
+  ekspander.pinMode(5, OUTPUT);       // IN3
+  ekspander.digitalWrite(5, LOW);
+  ekspander.pinMode(6, OUTPUT);       // IN4
+  ekspander.digitalWrite(6, LOW);
+  
   // spanie jeśli czekamy na alarm
+  //spanie();
+  
+  // ruch silnikiem krokowym X
+  
+  // zasilenie buzzera i diody w przycisku
+  delay(2000);
+  //digitalWrite(1, LOW);
+  digitalWrite(2, LOW);
+
+  delay(2000);
+  
+  // zczytywanie kiedy wciśnięty zostanie przycisk
+  //kiedyWcisniety();   // moze do poprawienia? ---------
+  
+  // wyłączeine buzzera i diody X
+  //digitalWrite(1, HIGH);
+  digitalWrite(2, HIGH);
+
+  // łączenie z wifi
+  //wifiConnect();
+
+  // łączenie z firebase
+  //Firebase.begin(FIREBASE_BAZA, FIREBASE_KLUCZ);
+  //delay(100);
+  
+  // przesył danych do bazy
+  //przesylNowychDanych();
+
+  // pobieranie ustawień na następny alarm
+  //pobranieNastepnegoAlarmu();
+
+  // zmiejszenie ilości dostępnych dawek leków o 1
+  //int pozostaleDawki = Firebase.getInt("/Ustawienia/iloscPozostalychDawek")-1;
+  //Firebase.setInt("/Ustawienia/iloscPozostalychDawek", pozostaleDawki);
+}
+
+void loop() {
+
+}
+/*
+void spanie(){
   if(abs(pamiec_RTC.nastepnyAlarm - obecnaGodzina) > 1) {                 // godzina spania
     ESP.deepSleep(CZAS_SPANIA * 1e6);
   } else if(abs(pamiec_RTC.nastepnyAlarm - obecnaGodzina) > 0.75) {       // 45 min spania
@@ -40,39 +106,48 @@ void setup() {
     ESP.deepSleep(0.16 * CZAS_SPANIA * 1e6);
   } else if(abs(pamiec_RTC.nastepnyAlarm - obecnaGodzina) > 0.08) {       // ok 5 min spania
     ESP.deepSleep(0.08 * CZAS_SPANIA * 1e6);
-  }*/
-  
-  // ruch silnikiem krokowym
-  // ustawienie pinów z buzzerem i diodą na OUTPUT i zasilenie
-  // ustawienie pinu z przyciskiem na INPUT i zczytywanie kiedy wyłączone
+}
 
-  wifiConnect();
+void kiedyWcisniety(){
+  while(1){
+    if(digitalRead(3)){    // czy chce odczytać 1 czy 0?
+      break;
+    }
+  }
+}
 
-  Firebase.begin(FIREBASE_BAZA, FIREBASE_KLUCZ);
-  delay(100);
+void wifiConnect() {
+  WiFi.begin(WIFI_NAZWA, WIFI_HASLO);
 
-  // przesył danych do bazy
+  int teller = 0;
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+  }
+}
+
+void przesylNowychDanych(){
   int iloscDanych = Firebase.getInt("/Dane/iloscDanych") + 1;
   String nazwa = "dane" + String(iloscDanych);
-  /*
+
   Firebase.setInt("/Dane/"+nazwa+"/dzien", zegar.dayOfMonth);       // gdy zegar będzie działać - zamienić
   Firebase.setInt("/Dane/"+nazwa+"/miesiac", zegar.month);
   Firebase.setInt("/Dane/"+nazwa+"/rok", zegar.year+2000);
   Firebase.setInt("/Dane/"+nazwa+"/godziny", zegar.hour);
   Firebase.setInt("/Dane/"+nazwa+"/minuty", zegar.minute);
   Firebase.setInt("/Dane/iloscDanych", iloscDanych);
-  */
-  /*
+
+  // do testu --------
   Firebase.setInt("/Dane/"+nazwa+"/dzien", 27);
   Firebase.setInt("/Dane/"+nazwa+"/miesiac", 10);
   Firebase.setInt("/Dane/"+nazwa+"/rok", 2020);
   Firebase.setInt("/Dane/"+nazwa+"/godziny", 14);
   Firebase.setInt("/Dane/"+nazwa+"/minuty", 56);
   Firebase.setInt("/Dane/iloscDanych", iloscDanych);
-  */
   
-  
-  // pobieranie ustawień na następny alarm
+}
+
+
+void pobranieNastepnegoAlarmu(){
   int ilosc = Firebase.getInt("/Ustawienia/ilosc");
   
   String sh1, sh2, sh3;
@@ -123,55 +198,5 @@ void setup() {
       pamiec_RTC.nastepnyAlarm = h1;
     }
   }
-  //Serial.print(pamiec_RTC.nastepnyAlarm);
-
-  // zmiejszenie ilości dostępnych dawek leków o 1
-  //int pozostaleDawki = Firebase.getInt("/Ustawienia/iloscPozostalychDawek")-1;
-  //Firebase.setInt("/Ustawienia/iloscPozostalychDawek", pozostaleDawki);
- 
 }
-
-void loop() {
-  /*
-  Serial.println("Value: " + Firebase.getInt("LEDStatus"));
-  if (Firebase.getInt("LEDStatus")) {
-    digitalWrite(2, HIGH);
-  } else {
-    digitalWrite(2, LOW);
-  }
-  if (Firebase.failed()) { // Check for errors
-    Serial.print("setting /number failed:");
-    Serial.println(Firebase.error());
-    //return;
-  }
-  delay(10);
-  */
-}
-
-void wifiConnect() {
-  WiFi.begin(WIFI_NAZWA, WIFI_HASLO);             // Connect to the network
-  Serial.print("Connecting to ");
-  Serial.print(WIFI_NAZWA); Serial.println(" ...");
-
-  int teller = 0;
-  while (WiFi.status() != WL_CONNECTED) {                                      // Wait for the Wi-Fi to connect
-    delay(1000);
-    Serial.print(++teller); Serial.print(' ');
-  }
-
-  Serial.println('\n');
-  Serial.println("Connection established!");
-  Serial.print("IP address:\t");
-  Serial.println(WiFi.localIP());         // Send the IP address of the ESP8266 to the computer
-}
-/*
-  void readFrompamiec_RTCory(){
-  system_rtc_mem_read(pamiec_RTCORYSTART, &pamiec_RTC, sizeof(pamiec_RTC));
-  yield();
-  }
-
-  void writeTopamiec_RTCory(){
-  system_rtc_mem_write(pamiec_RTCORYSTART, &pamiec_RTC, 4);
-  yield();
-  }
 */
