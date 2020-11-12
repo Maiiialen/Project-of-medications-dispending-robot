@@ -131,6 +131,9 @@ public class Activity1 extends AppCompatActivity implements AdapterView.OnItemSe
                 przesyl_ustawien.setIloscPozostalychDawek(iloscPozostalychDawek);
                 reff.setValue(przesyl_ustawien);
 
+                przesyl_ustawien.setPoziomBaterii(procent);
+                reff.setValue(przesyl_ustawien);
+
                 Toast.makeText(view.getContext(), "Ustawione.", Toast.LENGTH_SHORT).show();
             }
         });

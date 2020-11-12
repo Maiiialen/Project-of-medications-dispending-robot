@@ -1,8 +1,7 @@
 #include <ESP8266WiFi.h>
 #include <FirebaseArduino.h>
 #include <Wire.h>
-#include <Stepper.h>
-#include "DS1307.h"
+#include <DS3231.h>
 #include "PCF8574.h"
 
 #define WIFI_NAZWA "DESKTOP"
@@ -10,78 +9,87 @@
 #define FIREBASE_BAZA "robotdowydawanialekow.firebaseio.com"
 #define FIREBASE_KLUCZ "HHdjaAsoNlfx7vMf7ht73WEzNGa7KK5TtcRbN9uy"
 
-#define CZAS_SPANIA 3600        //CZAS_SPANIA to czas sekund jednego cyklu spania - docelowo godzina 60*60 = 3600 sekund
+#define CZAS_SPANIA_60 3600        // godzina 60*60 = 3600 sekund
+#define CZAS_SPANIA_45 2700
+#define CZAS_SPANIA_30 1800
+#define CZAS_SPANIA_20 1200
+#define CZAS_SPANIA_15 900
+#define CZAS_SPANIA_10 600
+#define CZAS_SPANIA_5 300
+#define CZAS_SPANIA_1 60
 
-DS1307 zegar;
-PCF8574 ekspander(0x20);
+RTClib zegar;
+PCF8574 ekspander(0x20);    //A0, A1, A2 równe 0
 
 typedef struct {
   int nastepnyAlarm;
 } skladowanie_RTC;
 
 skladowanie_RTC pamiec_RTC;
-int obecnaGodzina;
+DateTime obecnaChwila;
 
 void spanie();
 void ruchSilnika();
 void kiedyWcisniety();
 void wifiConnect();
 void przesylNowychDanych();
+void pobraniePierwszegoAlarmu();
 void pobranieNastepnegoAlarmu();
 void wysylIlosciDawek();
 void wysylPoziomuBaterii();
+void czytajRTC();
+void zapiszRTC();
 
-void setup() {
-  // do testu --------
-  //pamiec_RTC.nastepnyAlarm = 23;
+void setup() {  
+  //Serial.begin(9600);
+  //Serial.println("");
+  //Serial.print("godzina alarmu: ");
+  //Serial.println(pamiec_RTC.nastepnyAlarm);
   
   // inicjalizacja ekspandera
-  ekspander.begin();    //A0, A1, A2 równe 0
+  ekspander.begin();
+
+  //pinMode(A0, INPUT);
+  pinMode(2, OUTPUT);
+  digitalWrite(2, LOW);
+
+  ekspander.write(0, LOW);    // buzzer
+  ekspander.write(1, LOW);    // dioda
+  ekspander.write(4, LOW);    // IN1 silnik
+  ekspander.write(5, LOW);    // IN2
+  ekspander.write(6, LOW);    // IN3
+  ekspander.write(7, LOW);    // IN4
   
   // inicjalizacja zegara i pobranie obecnej godziny
-  zegar.begin();
-  obecnaGodzina = zegar.hour + zegar.minute/60; //pobranie obecnej godziny z RTC
+  obecnaChwila = zegar.now();
 
-  pinMode(A0, INPUT);
+  // pobranie godziny najblizszego alarmu
+  czytajRTC();
 
-  // to chyba niepotrzebne? ----------
-  //pinMode(D1, OUTPUT);      // do I2C
-  //digitalWrite(D1, HIGH);
-  //pinMode(D2, OUTPUT);      // do I2C
-  //digitalWrite(D2, HIGH);
-  
-  ekspander.pinMode(0, OUTPUT);       // buzzer
-  ekspander.digitalWrite(0, HIGH);
-  ekspander.pinMode(1, OUTPUT);       // dioda
-  ekspander.digitalWrite(1, HIGH);
-  ekspander.pinMode(2, INPUT);        // przycisk
-  
-  ekspander.pinMode(4, OUTPUT);       // IN1 silnik
-  ekspander.digitalWrite(4, LOW);
-  ekspander.pinMode(5, OUTPUT);       // IN2
-  ekspander.digitalWrite(5, LOW);
-  ekspander.pinMode(6, OUTPUT);       // IN3
-  ekspander.digitalWrite(6, LOW);
-  ekspander.pinMode(7, OUTPUT);       // IN4
-  ekspander.digitalWrite(7, LOW);
+  if(pamiec_RTC.nastepnyAlarm != 0 && pamiec_RTC.nastepnyAlarm != 1 && pamiec_RTC.nastepnyAlarm != 2 && pamiec_RTC.nastepnyAlarm != 3 && pamiec_RTC.nastepnyAlarm != 4 && pamiec_RTC.nastepnyAlarm != 5 && pamiec_RTC.nastepnyAlarm != 6 && pamiec_RTC.nastepnyAlarm != 7 && pamiec_RTC.nastepnyAlarm != 8 && pamiec_RTC.nastepnyAlarm != 9 && pamiec_RTC.nastepnyAlarm != 10 && pamiec_RTC.nastepnyAlarm != 11 && pamiec_RTC.nastepnyAlarm != 12 && pamiec_RTC.nastepnyAlarm != 13 && pamiec_RTC.nastepnyAlarm != 14 && pamiec_RTC.nastepnyAlarm != 15 && pamiec_RTC.nastepnyAlarm != 16 && pamiec_RTC.nastepnyAlarm != 17 && pamiec_RTC.nastepnyAlarm != 18 && pamiec_RTC.nastepnyAlarm != 19 && pamiec_RTC.nastepnyAlarm != 20 && pamiec_RTC.nastepnyAlarm != 21 && pamiec_RTC.nastepnyAlarm != 22 && pamiec_RTC.nastepnyAlarm != 23){
+    pobraniePierwszegoAlarmu();
+  }
   
   // spanie jeśli czekamy na alarm
   spanie();
   
+  Serial.println("po spaniu");
   
-  // ruch silnikiem krokowym X
+  // ruch silnikiem krokowym
   ruchSilnika();
   
   // zasilenie buzzera i diody w przycisku
-  ekspander.digitalWrite(0, HIGH);
-  ekspander.digitalWrite(1, HIGH);
+  //Serial.println("Read1");
+  ekspander.write(0, HIGH);
+  ekspander.write(1, HIGH);
   
   // zczytywanie kiedy wciśnięty zostanie przycisk
-  kiedyWcisniety();   // moze do poprawienia? ---------
+  kiedyWcisniety();
   
   // wyłączeine buzzera i diody
-  ekspander.digitalWrite(0, LOW);
-  ekspander.digitalWrite(1, LOW);
+  ekspander.write(0, LOW);
+  ekspander.write(1, LOW);
+  //Serial.println("Read2");
 
   // łączenie z wifi
   wifiConnect();
@@ -103,53 +111,59 @@ void setup() {
   wysylPoziomuBaterii();
 }
 
-void loop() {
-
-}
+void loop() {}
 
 void spanie(){
-  if(abs(pamiec_RTC.nastepnyAlarm - obecnaGodzina) > 1) {                 // godzina spania
-    ESP.deepSleep(CZAS_SPANIA * 1e6);
-  } else if(abs(pamiec_RTC.nastepnyAlarm - obecnaGodzina) > 0.75) {       // 45 min spania
-    ESP.deepSleep(0.75 * CZAS_SPANIA * 1e6);
-  } else if(abs(pamiec_RTC.nastepnyAlarm - obecnaGodzina) > 0.5) {        // 30 min spania
-    ESP.deepSleep(0.5 * CZAS_SPANIA * 1e6);
-  } else if(abs(pamiec_RTC.nastepnyAlarm - obecnaGodzina) > 0.25) {       // 25 min spania
-    ESP.deepSleep(0.25 * CZAS_SPANIA * 1e6);
-  } else if(abs(pamiec_RTC.nastepnyAlarm - obecnaGodzina) > 0.16) {       // ok 10 min spania
-    ESP.deepSleep(0.16 * CZAS_SPANIA * 1e6);
-  } else if(abs(pamiec_RTC.nastepnyAlarm - obecnaGodzina) > 0.08) {       // ok 5 min spania
-    ESP.deepSleep(0.08 * CZAS_SPANIA * 1e6);
+  if(pamiec_RTC.nastepnyAlarm - obecnaChwila.hour() > 1) {   // godzina spania
+    ESP.deepSleep(CZAS_SPANIA_60 * 1e6);
+  } else if(obecnaChwila.minute() < 15){                          // 45 min spania
+    ESP.deepSleep(CZAS_SPANIA_45 * 1e6);
+  } else if(obecnaChwila.minute() < 30){                          // 30 min spania
+    ESP.deepSleep(CZAS_SPANIA_30 * 1e6);
+  } else if(obecnaChwila.minute() < 40){                          // 20 min spania
+    ESP.deepSleep(CZAS_SPANIA_20 * 1e6);
+  } else if(obecnaChwila.minute() < 45){                          // 15 min spania
+    ESP.deepSleep(CZAS_SPANIA_15 * 1e6);
+  } else if(obecnaChwila.minute() < 50){                          // 10 min spania
+    ESP.deepSleep(CZAS_SPANIA_10 * 1e6);
+  } else if(obecnaChwila.minute() < 55){                           // 5 min spania
+    ESP.deepSleep(CZAS_SPANIA_5 * 1e6);
+  } else if(obecnaChwila.minute() < 59){                           // 1 min spania
+    ESP.deepSleep(CZAS_SPANIA_1 * 1e6);
   }
 }
 
 void ruchSilnika(){
-  for(int i=0; i<128; ++i){
-    ekspander.digitalWrite(4, HIGH);
-    ekspander.digitalWrite(5, HIGH);
-    ekspander.digitalWrite(6, LOW);
-    ekspander.digitalWrite(7, LOW);
+  for(int i=0; i<32; ++i){
+    ekspander.write(4, HIGH);
+    ekspander.write(5, HIGH);
+    ekspander.write(6, LOW);
+    ekspander.write(7, LOW);
+    delay(10);
     
-    ekspander.digitalWrite(4, LOW);
-    ekspander.digitalWrite(5, HIGH);
-    ekspander.digitalWrite(6, HIGH);
-    ekspander.digitalWrite(7, LOW);
+    ekspander.write(4, LOW);
+    ekspander.write(5, HIGH);
+    ekspander.write(6, HIGH);
+    ekspander.write(7, LOW);
+    delay(10);
     
-    ekspander.digitalWrite(4, LOW);
-    ekspander.digitalWrite(5, LOW);
-    ekspander.digitalWrite(6, HIGH);
-    ekspander.digitalWrite(7, HIGH);
+    ekspander.write(4, LOW);
+    ekspander.write(5, LOW);
+    ekspander.write(6, HIGH);
+    ekspander.write(7, HIGH);
+    delay(10);
     
-    ekspander.digitalWrite(4, HIGH);
-    ekspander.digitalWrite(5, LOW);
-    ekspander.digitalWrite(6, LOW);
-    ekspander.digitalWrite(7, HIGH);
+    ekspander.write(4, HIGH);
+    ekspander.write(5, LOW);
+    ekspander.write(6, LOW);
+    ekspander.write(7, HIGH);
+    delay(10);
   }
 }
 
 void kiedyWcisniety(){
   while(1){
-    if(ekspander.digitalRead(2)){    // czy chce odczytać 1 czy 0?
+    if(ekspander.read(2)){    // czy chce odczytać 1 czy 0?
       break;
     }
   }
@@ -167,20 +181,13 @@ void wifiConnect(){
 void przesylNowychDanych(){
   int iloscDanych = Firebase.getInt("/Dane/iloscDanych") + 1;
   String nazwa = "dane" + String(iloscDanych);
+  obecnaChwila = zegar.now();
 
-  Firebase.setInt("/Dane/"+nazwa+"/dzien", zegar.dayOfMonth);       // gdy zegar będzie działać - zamienić
-  Firebase.setInt("/Dane/"+nazwa+"/miesiac", zegar.month);
-  Firebase.setInt("/Dane/"+nazwa+"/rok", zegar.year+2000);
-  Firebase.setInt("/Dane/"+nazwa+"/godziny", zegar.hour);
-  Firebase.setInt("/Dane/"+nazwa+"/minuty", zegar.minute);
-  Firebase.setInt("/Dane/iloscDanych", iloscDanych);
-
-  // do testu --------
-  Firebase.setInt("/Dane/"+nazwa+"/dzien", 27);
-  Firebase.setInt("/Dane/"+nazwa+"/miesiac", 10);
-  Firebase.setInt("/Dane/"+nazwa+"/rok", 2020);
-  Firebase.setInt("/Dane/"+nazwa+"/godziny", 14);
-  Firebase.setInt("/Dane/"+nazwa+"/minuty", 56);
+  Firebase.setInt("/Dane/"+nazwa+"/dzien", obecnaChwila.year());       // gdy zegar będzie działać - zamienić
+  Firebase.setInt("/Dane/"+nazwa+"/miesiac", obecnaChwila.month());
+  Firebase.setInt("/Dane/"+nazwa+"/rok", obecnaChwila.year());
+  Firebase.setInt("/Dane/"+nazwa+"/godziny", obecnaChwila.hour());
+  Firebase.setInt("/Dane/"+nazwa+"/minuty", obecnaChwila.minute());
   Firebase.setInt("/Dane/iloscDanych", iloscDanych);
 }
 
@@ -190,11 +197,23 @@ void wysylIlosciDawek(){
 }
 
 void wysylPoziomuBaterii(){
-  int iloscDanych = Firebase.getInt("/Ustawienia/poziom") + 1;
   //Firebase.setInt("/Ustawienia/poziom", analogRead(A0)*100/1023);
   Firebase.setInt("/Ustawienia/poziomBaterii", 20);            // do testu -------------
 }
 
+void pobraniePierwszegoAlarmu(){
+  // łączenie z wifi
+  wifiConnect();
+
+  // łączenie z firebase
+  Firebase.begin(FIREBASE_BAZA, FIREBASE_KLUCZ);
+  delay(100);
+  
+  Serial.println("przed zapisem");
+  int zmienna = Firebase.getString("/Ustawienia/godziny1").toInt();
+  pamiec_RTC.nastepnyAlarm = zmienna;
+  Serial.println(pamiec_RTC.nastepnyAlarm);
+}
 
 void pobranieNastepnegoAlarmu(){
   int ilosc = Firebase.getInt("/Ustawienia/ilosc");
@@ -247,4 +266,16 @@ void pobranieNastepnegoAlarmu(){
       pamiec_RTC.nastepnyAlarm = h1;
     }
   }
+  zapiszRTC();
+  Serial.println(pamiec_RTC.nastepnyAlarm);
+}
+
+void czytajRTC(){
+  system_rtc_mem_read(65, &pamiec_RTC, sizeof(pamiec_RTC));
+  yield();
+}
+
+void zapiszRTC(){
+  system_rtc_mem_write(65, &pamiec_RTC, 4);
+  yield();
 }

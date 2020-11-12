@@ -6,6 +6,7 @@ public class Przesyl_ustawien {
     private String godziny2;
     private String godziny3;
     private String iloscPozostalychDawek;
+    private String PoziomBaterii;
 
     public Przesyl_ustawien() {}
 
@@ -47,5 +48,13 @@ public class Przesyl_ustawien {
 
     public void setIloscPozostalychDawek(String iloscPozostalychDawek) {
         this.iloscPozostalychDawek = iloscPozostalychDawek;
+    }
+
+    public String getPoziomBaterii() {
+        return PoziomBaterii;
+    }
+
+    public void setPoziomBaterii(String PoziomBaterii) {
+        this.PoziomBaterii = PoziomBaterii;
     }
 }
