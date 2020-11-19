@@ -1,21 +1,20 @@
 package com.example.RobotDoWydawaniaLekow;
 
 public class Przesyl_ustawien {
-    private Integer ilosc;
+    private Integer liczba;
     private String godziny1;
     private String godziny2;
     private String godziny3;
-    private String iloscPozostalychDawek;
-    private String PoziomBaterii;
+    private Integer liczbaPozostalychDawek;
 
     public Przesyl_ustawien() {}
 
-    public Integer getIlosc() {
-        return ilosc;
+    public Integer getLiczba() {
+        return liczba;
     }
 
-    public void setIlosc(Integer ilosc) {
-        this.ilosc = ilosc;
+    public void setLiczba(Integer liczba) {
+        this.liczba = liczba;
     }
 
     public String getGodziny1() {
@@ -42,19 +41,11 @@ public class Przesyl_ustawien {
         this.godziny3 = godziny3;
     }
 
-    public String getIloscPozostalychDawek() {
-        return iloscPozostalychDawek;
+    public Integer getLiczbaPozostalychDawek() {
+        return liczbaPozostalychDawek;
     }
 
-    public void setIloscPozostalychDawek(String iloscPozostalychDawek) {
-        this.iloscPozostalychDawek = iloscPozostalychDawek;
-    }
-
-    public String getPoziomBaterii() {
-        return PoziomBaterii;
-    }
-
-    public void setPoziomBaterii(String PoziomBaterii) {
-        this.PoziomBaterii = PoziomBaterii;
+    public void setLiczbaPozostalychDawek(Integer liczbaPozostalychDawek) {
+        this.liczbaPozostalychDawek = liczbaPozostalychDawek;
     }
 }

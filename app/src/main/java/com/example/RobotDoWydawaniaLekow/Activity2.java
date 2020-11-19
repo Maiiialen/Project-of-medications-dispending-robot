@@ -26,7 +26,7 @@ public class Activity2 extends AppCompatActivity {
     String rok;
     String godziny;
     String minuty;
-    Long ilosc;
+    Long liczba;
     String temp;
 
     @Override
@@ -43,8 +43,8 @@ public class Activity2 extends AppCompatActivity {
         reff.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                ilosc = snapshot.getChildrenCount()-1;
-                for(long i = ilosc.longValue(); i > ilosc-20 && i > 0; --i){
+                liczba = snapshot.getChildrenCount()-1;
+                for(long i = liczba.longValue(); i > liczba-20 && i > 0; --i){
                     temp = "" + i;
                     dzien = snapshot.child("dane" + temp).child("dzien").getValue().toString();
                     miesiac = snapshot.child("dane" + temp).child("miesiac").getValue().toString();

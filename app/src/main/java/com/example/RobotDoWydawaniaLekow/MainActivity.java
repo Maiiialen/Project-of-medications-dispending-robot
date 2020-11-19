@@ -27,10 +27,10 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     DatabaseReference reff;
     DatabaseReference reffUstawienia;
-    String iloscPozostalychDawek;
+    String liczbaPozostalychDawek;
     String procent;
-    TextView iloscDawek;
-    TextView iloscProcent;
+    TextView liczbaDawek;
+    TextView liczbaProcent;
     ListView listView;
     ArrayList<String> arrayList = new ArrayList<>();
     Button fullList;
@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     String rok;
     String godziny;
     String minuty;
-    Long ilosc;
+    Long liczba;
     String temp;
 
     @Override
@@ -49,8 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
         //przypisanie przycisku do zmiennej
         fullList = (Button) findViewById(R.id.button_fullList);
-        iloscDawek = (TextView) findViewById(R.id.textiloscDawek);
-        iloscProcent = (TextView) findViewById(R.id.textiloscProcent);
+        liczbaDawek = (TextView) findViewById(R.id.textliczbaDawek);
 
         // ustawianie tytułu
         getSupportActionBar().setTitle(getString(R.string.mainPage));
@@ -61,10 +60,9 @@ public class MainActivity extends AppCompatActivity {
              @Override
              public void onDataChange(@NonNull DataSnapshot snapshot) {
                  try{
-                     iloscPozostalychDawek = snapshot.child("iloscPozostalychDawek").getValue().toString();
-                     procent = snapshot.child("poziomBaterii").getValue().toString();
+                     liczbaPozostalychDawek = snapshot.child("liczbaPozostalychDawek").getValue().toString();
                  } catch (Exception e) {}
-                 dodajIloscDawek();
+                 dodajliczbaDawek();
              }
 
              @Override
@@ -75,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
         reff.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                ilosc = snapshot.getChildrenCount()-1;
-                for(long i = ilosc.longValue(); i > ilosc-3; --i){
+                liczba = snapshot.getChildrenCount()-1;
+                for(long i = liczba.longValue(); i > liczba-3; --i){
                     temp = "" + i;
                     dzien = snapshot.child("dane" + temp).child("dzien").getValue().toString();
                     miesiac = snapshot.child("dane" + temp).child("miesiac").getValue().toString();
@@ -140,8 +138,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // dodanie zczytanych elementów na listę
-    public void dodajIloscDawek(){
-        iloscDawek.setText(iloscPozostalychDawek + "/14");
-        iloscProcent.setText(procent + "%");
+    public void dodajliczbaDawek(){
+        liczbaDawek.setText(liczbaPozostalychDawek + "/15");
     }
 }

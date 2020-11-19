@@ -24,11 +24,11 @@ public class Activity1 extends AppCompatActivity implements AdapterView.OnItemSe
     DatabaseReference reff;
     Przesyl_ustawien przesyl_ustawien;
     Button buttonSave;
-    String iloscPozostalychDawek;
-    String procent;
-    TextView iloscDawek;
-    TextView iloscProcent;
-    String ilosc;
+    Button buttonUzupelnienie;
+    String liczbaPozostalychDawek;
+    Integer Dawek;
+    TextView liczbaDawek;
+    String liczba;
     String godziny1;
     String godziny2;
     String godziny3;
@@ -52,15 +52,15 @@ public class Activity1 extends AppCompatActivity implements AdapterView.OnItemSe
 
         // przypisanie do zmiennych istniejących obiektów w oknie
         buttonSave = (Button) findViewById(R.id.buttonSave);
+        buttonUzupelnienie = (Button) findViewById(R.id.buttonUzupelnienie);
         spinerDawki = findViewById(R.id.spinner_dawki);
         spinerGodziny1 = findViewById(R.id.spinner_godzina1);
         spinerGodziny2 = findViewById(R.id.spinner_godzina2);
         spinerGodziny3 = findViewById(R.id.spinner_godzina3);
-        iloscDawek = (TextView) findViewById(R.id.textViewiloscDawek);
-        iloscProcent = (TextView) findViewById(R.id.procenty);
+        liczbaDawek = (TextView) findViewById(R.id.textViewliczbaDawek);
 
         // utworzenie adapterów
-        adapter_dawki = ArrayAdapter.createFromResource(this, R.array.ilosc, android.R.layout.simple_spinner_item);
+        adapter_dawki = ArrayAdapter.createFromResource(this, R.array.liczba, android.R.layout.simple_spinner_item);
         adapter_dawki.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         adapter_godziny1 = ArrayAdapter.createFromResource(this, R.array.godziny, android.R.layout.simple_spinner_item);
         adapter_godziny1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -87,14 +87,11 @@ public class Activity1 extends AppCompatActivity implements AdapterView.OnItemSe
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String text;
                 try {
-                    //Log.d("przed", "----------");
-                    iloscPozostalychDawek = snapshot.child("iloscPozostalychDawek").getValue().toString();
-                    procent = snapshot.child("poziomBaterii").getValue().toString();
-                    ilosc = snapshot.child("ilosc").getValue().toString();
+                    liczbaPozostalychDawek = snapshot.child("liczbaPozostalychDawek").getValue().toString();
+                    liczba = snapshot.child("liczba").getValue().toString();
                     godziny1 = snapshot.child("godziny1").getValue().toString();
                     godziny2 = snapshot.child("godziny2").getValue().toString();
                     godziny3 = snapshot.child("godziny3").getValue().toString();
-                    //Log.d("po", "----------"+godziny1);
                 } catch (Exception e) {}
                 ustawUstawienia();
             }
@@ -110,10 +107,11 @@ public class Activity1 extends AppCompatActivity implements AdapterView.OnItemSe
             @Override
             public void onClick(View view) {
                 String text;
+                Dawek = Integer.parseInt(liczbaPozostalychDawek);
 
                 text = spinerDawki.getSelectedItem().toString();
-                int ilosc = Integer.parseInt(text.trim());
-                przesyl_ustawien.setIlosc(ilosc);
+                int liczba = Integer.parseInt(text.trim());
+                przesyl_ustawien.setLiczba(liczba);
                 reff.setValue(przesyl_ustawien);
 
                 text = spinerGodziny1.getSelectedItem().toString();
@@ -128,25 +126,53 @@ public class Activity1 extends AppCompatActivity implements AdapterView.OnItemSe
                 przesyl_ustawien.setGodziny3(text);
                 reff.setValue(przesyl_ustawien);
 
-                przesyl_ustawien.setIloscPozostalychDawek(iloscPozostalychDawek);
-                reff.setValue(przesyl_ustawien);
-
-                przesyl_ustawien.setPoziomBaterii(procent);
+                przesyl_ustawien.setLiczbaPozostalychDawek(Dawek);
                 reff.setValue(przesyl_ustawien);
 
                 Toast.makeText(view.getContext(), "Ustawione.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // zapisanie nowych ustawień do bazy danych wywoływane po naciśnięciu przycisku
+        buttonUzupelnienie.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            String text;
+            Dawek = 15;
+            liczbaPozostalychDawek = Dawek.toString();
+
+            text = spinerDawki.getSelectedItem().toString();
+            int liczba = Integer.parseInt(text.trim());
+            przesyl_ustawien.setLiczba(liczba);
+            reff.setValue(przesyl_ustawien);
+
+            text = spinerGodziny1.getSelectedItem().toString();
+            przesyl_ustawien.setGodziny1(text);
+            reff.setValue(przesyl_ustawien);
+
+            text = spinerGodziny2.getSelectedItem().toString();
+            przesyl_ustawien.setGodziny2(text);
+            reff.setValue(przesyl_ustawien);
+
+            text = spinerGodziny3.getSelectedItem().toString();
+            przesyl_ustawien.setGodziny3(text);
+            reff.setValue(przesyl_ustawien);
+
+            przesyl_ustawien.setLiczbaPozostalychDawek(Dawek);
+            reff.setValue(przesyl_ustawien);
+
+            Toast.makeText(view.getContext(), "Ustawione.", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     // zapisanie w spinerach wartości zczytach z bazy
     public void ustawUstawienia() {
-        spinerDawki.setSelection(adapter_dawki.getPosition(ilosc));
+        spinerDawki.setSelection(adapter_dawki.getPosition(liczba));
         spinerGodziny1.setSelection(adapter_godziny1.getPosition(godziny1));
         spinerGodziny2.setSelection(adapter_godziny2.getPosition(godziny2));
         spinerGodziny3.setSelection(adapter_godziny3.getPosition(godziny3));
-        iloscDawek.setText(iloscPozostalychDawek + "/14");
-        iloscProcent.setText(procent + "%");
+        liczbaDawek.setText(liczbaPozostalychDawek + "/15");
     }
 
     public void openActivity1(){

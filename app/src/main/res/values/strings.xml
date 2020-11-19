@@ -5,17 +5,15 @@
     <string name="full_list">Pełna lista</string>
     <string name="ostatnieAlarmy">Ostatnie alarmy</string>
     <string name="uzupelnienie">Uzupelnienie pojemniczków</string>
-    <string name="ustawienia1">Dzienna ilość dawek</string>
+    <string name="ustawienia1">Dzienna liczba dawek</string>
     <string name="ustawienia2">Godzina alarmu pierwszego</string>
     <string name="ustawienia3">Godzina alarmu drugiego (opcjonalne)</string>
     <string name="ustawienia4">Godzina alarmu trzeciego (opcjonalne)</string>
     <string name="bottonZapisz">Zapisz</string>
-    <string name="ileDawek">Ilość pozostałych dawek: </string>
-    <string name="ilosc">12/14</string>
-    <string name="ileProcent">Poziom naładowania baterii: </string>
-    <string name="procenty">100%</string>
+    <string name="ileDawek">Liczba pozostałych dawek: </string>
+    <string name="liczba">15/15</string>
 
-    <string-array name="ilosc">
+    <string-array name="liczba">
         <item>1</item>
         <item>2</item>
         <item>3</item>

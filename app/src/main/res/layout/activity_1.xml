@@ -85,21 +85,6 @@
         android:text="@string/ileDawek"
         android:textColor="#000000" />
 
-    <TextView
-        android:id="@+id/iloscProcent"
-        android:layout_width="match_parent"
-        android:layout_height="25dp"
-        android:layout_below="@+id/pozostaleDawki"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_toStartOf="@+id/spinner_dawki"
-        android:layout_toLeftOf="@+id/spinner_dawki"
-        android:text="@string/ileProcent"
-        android:textColor="#000000" />
-
     <Spinner
         android:id="@+id/spinner_dawki"
         android:layout_width="105dp"
@@ -152,7 +137,7 @@
         android:layout_marginRight="20dp" />
 
     <TextView
-        android:id="@+id/textViewiloscDawek"
+        android:id="@+id/textViewliczbaDawek"
         android:layout_width="95dp"
         android:layout_height="25dp"
         android:layout_below="@+id/spinner_godzina3"
@@ -163,22 +148,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"
-        android:text="@string/ilosc"
-        android:textColor="#000000" />
-
-    <TextView
-        android:id="@+id/procenty"
-        android:layout_width="95dp"
-        android:layout_height="25dp"
-        android:layout_below="@+id/textViewiloscDawek"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginRight="20dp"
-        android:text="@string/procenty"
+        android:text="@string/liczba"
         android:textColor="#000000" />
 
     <Button
