@@ -13,17 +13,6 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
-$Comp
-L Device:Battery_Cell BT1
-U 1 1 5F5E72F1
-P 1400 4400
-F 0 "BT1" H 1518 4496 50  0000 L CNN
-F 1 "Battery_Cell" H 1518 4405 50  0000 L CNN
-F 2 "" V 1400 4460 50  0001 C CNN
-F 3 "~" V 1400 4460 50  0001 C CNN
-	1    1400 4400
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	8700 2550 8700 2750
 $Comp
@@ -92,12 +81,12 @@ $EndComp
 $Comp
 L pspice:0 GND
 U 1 1 5F63417C
-P 1400 4500
-F 0 "GND" H 1300 4400 50  0000 L CNN
-F 1 "0" H 1400 4589 50  0001 C CNN
-F 2 "" H 1400 4500 50  0001 C CNN
-F 3 "~" H 1400 4500 50  0001 C CNN
-	1    1400 4500
+P 1400 3850
+F 0 "GND" H 1300 3750 50  0000 L CNN
+F 1 "0" H 1400 3939 50  0001 C CNN
+F 2 "" H 1400 3850 50  0001 C CNN
+F 3 "~" H 1400 3850 50  0001 C CNN
+	1    1400 3850
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -240,7 +229,7 @@ L Device:R R8
 U 1 1 5F5F7A20
 P 8900 5050
 F 0 "R8" H 8850 5100 50  0000 R CNN
-F 1 "100k" H 8850 5000 50  0000 R CNN
+F 1 "10k" H 8850 5000 50  0000 R CNN
 F 2 "" V 8830 5050 50  0001 C CNN
 F 3 "~" H 8900 5050 50  0001 C CNN
 	1    8900 5050
@@ -272,41 +261,6 @@ F 3 "~" H 5850 5850 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	3250 5350 3600 5350
-$Comp
-L Device:R R1
-U 1 1 5FAA4304
-P 2650 4050
-F 0 "R1" V 2443 4050 50  0000 C CNN
-F 1 "4k7" V 2534 4050 50  0000 C CNN
-F 2 "" V 2580 4050 50  0001 C CNN
-F 3 "~" H 2650 4050 50  0001 C CNN
-	1    2650 4050
-	0    1    1    0   
-$EndComp
-$Comp
-L Device:R R2
-U 1 1 5FAA6AC3
-P 3050 4050
-F 0 "R2" V 2843 4050 50  0000 C CNN
-F 1 "1k" V 2934 4050 50  0000 C CNN
-F 2 "" V 2980 4050 50  0001 C CNN
-F 3 "~" H 3050 4050 50  0001 C CNN
-	1    3050 4050
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	2800 4050 2850 4050
-Wire Wire Line
-	3200 4050 3600 4050
-Wire Wire Line
-	3600 3750 2850 3750
-Connection ~ 2850 4050
-Wire Wire Line
-	2850 4050 2900 4050
-Wire Wire Line
-	3600 3750 3600 3950
-Wire Wire Line
-	2850 3750 2850 4050
 $Comp
 L pspice:0 GND
 U 1 1 5FADE33E
@@ -381,16 +335,11 @@ $EndComp
 Wire Wire Line
 	6300 4900 5850 4900
 Wire Wire Line
-	1400 4050 1400 4200
-Wire Wire Line
 	6300 5000 6100 5000
 Wire Wire Line
 	6100 5000 6100 6150
 Wire Wire Line
 	6200 5100 6300 5100
-Wire Wire Line
-	1400 4050 2500 4050
-Connection ~ 1400 4050
 Wire Wire Line
 	7000 4600 7050 4600
 Wire Wire Line
@@ -458,8 +407,6 @@ F 3 "~" H 7300 3600 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	1400 2750 3250 2750
-Wire Wire Line
-	1400 2750 1400 4050
 Wire Wire Line
 	3250 2750 3250 5350
 Connection ~ 3250 2750
@@ -589,4 +536,19 @@ Wire Wire Line
 	8050 5000 7000 5000
 Wire Wire Line
 	8050 3900 8050 5000
+Wire Wire Line
+	1400 3850 1400 3700
+$Comp
+L New_LibraryKiCad:power_supply U5
+U 1 1 5FBFAB08
+P 1400 3400
+F 0 "U5" H 1578 3296 50  0000 L CNN
+F 1 "power_supply" H 1578 3205 50  0000 L CNN
+F 2 "" H 1350 3500 50  0001 C CNN
+F 3 "" H 1350 3500 50  0001 C CNN
+	1    1400 3400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1400 2750 1400 3400
 $EndSCHEMATC

@@ -1,13 +1,13 @@
 #include <ESP8266WiFi.h>
 #include <FirebaseArduino.h>
-#include <Wire.h>
+//#include <Wire.h>
 #include <DS3231.h>
 #include "PCF8574.h"
 
-#define WIFI_NAZWA "DESKTOP"
-#define WIFI_HASLO "m&k$0001"
-#define FIREBASE_BAZA "robotdowydawanialekow.firebaseio.com"
-#define FIREBASE_KLUCZ "HHdjaAsoNlfx7vMf7ht73WEzNGa7KK5TtcRbN9uy"
+#define WIFI_NAZWA "nazwa"
+#define WIFI_HASLO "haslo"
+#define FIREBASE_BAZA "cos.firebaseio.com"
+#define FIREBASE_KLUCZ "klucz"
 
 #define CZAS_SPANIA_60 3600        // godzina 60*60 = 3600 sekund
 #define CZAS_SPANIA_45 2700
@@ -40,13 +40,7 @@ void zapiszRTC();
 void wlaczAlarm();
 void wylaczAlarm();
 
-void wysylPoziom(int value);
-void wysylAlarm(int value);
-
-void setup() {  
-  Serial.begin(9600);
-  Serial.println("! - - ");
-  
+void setup(){
   // inicjalizacja ekspandera
   ekspander.begin();
 
@@ -75,40 +69,26 @@ void setup() {
     pobranieAlarmu();
   }
   
-  Serial.print("godzina alarmu: ");
-  Serial.println(pamiec_RTC.nastepnyAlarm);
-  
   // spanie jeśli czekamy na alarm
   spanie();
-  
-  Serial.println("po spaniu");
   
   // ruch silnikiem krokowym
   ruchSilnika();
   delay(100);
   
-  Serial.println("po ruchu silnika");
-  
   // zasilenie buzzera i diody w przycisku
   wlaczAlarm();
-  
-  Serial.println("dioda wlaczona");
   
   // zczytywanie kiedy wciśnięty zostanie przycisk
   kiedyWcisniety();
   
-  Serial.println("po przycisku");
-  
   // wyłączeine buzzera i diody
   wylaczAlarm();
-  
-  Serial.println("dioda wylaczona");
-  Serial.println("teraz wifi");
+
+  delay(60000);
 
   // łączenie z wifi
   wifiConnect();
-
-  Serial.println("teraz firebase");
   
   // przesył danych do bazy
   przesylNowychDanych();
@@ -127,49 +107,27 @@ void loop() {}
 
 
 void spanie(){
-  Serial.print("start spania: ");
   if(abs(pamiec_RTC.nastepnyAlarm - obecnaChwila.hour()) > 1) {   // godzina spania
-    //wysylPoziom(60);
-    Serial.println("1 godzina");
-    ESP.deepSleep(CZAS_SPANIA_60 * 1e6);
-  } else if(pamiec_RTC.nastepnyAlarm - obecnaChwila.hour() < 0) {   // godzina spania
-    //wysylPoziom(60);
-    Serial.println("1 godzina");
     ESP.deepSleep(CZAS_SPANIA_60 * 1e6);
   } else if(obecnaChwila.minute() < 15){                          // 45 min spania
-    //wysylPoziom(45);
-    Serial.println("45 min");
     ESP.deepSleep(CZAS_SPANIA_45 * 1e6);
   } else if(obecnaChwila.minute() < 30){                          // 30 min spania
-    //wysylPoziom(30);
-    Serial.println("30 min");
     ESP.deepSleep(CZAS_SPANIA_30 * 1e6);
   } else if(obecnaChwila.minute() < 40){                          // 20 min spania
-    //wysylPoziom(20);
-    Serial.println("20 min");
     ESP.deepSleep(CZAS_SPANIA_20 * 1e6);
   } else if(obecnaChwila.minute() < 45){                          // 15 min spania
-    //wysylPoziom(15);
-    Serial.println("15 min");
     ESP.deepSleep(CZAS_SPANIA_15 * 1e6);
   } else if(obecnaChwila.minute() < 50){                          // 10 min spania
-    //wysylPoziom(40);
-    Serial.println("10 min");
     ESP.deepSleep(CZAS_SPANIA_10 * 1e6);
   } else if(obecnaChwila.minute() < 55){                           // 5 min spania
-    //wysylPoziom(5);
-    Serial.println("5 min");
     ESP.deepSleep(CZAS_SPANIA_5 * 1e6);
   } else if(obecnaChwila.minute() < 59){                           // 1 min spania
-    //wysylPoziom(1);
-    Serial.println("1 min");
     ESP.deepSleep(CZAS_SPANIA_1 * 1e6);
   }
-  wysylPoziom(100);
 }
 
 void ruchSilnika(){
-  for(int i=0; i<96; ++i){  //32?
+  for(int i=0; i<32; ++i){
     ekspander.write(4, HIGH);
     ekspander.write(5, HIGH);
     ekspander.write(6, LOW);
@@ -247,17 +205,6 @@ void wysylLiczbaDawek(){
   Firebase.setInt("/Ustawienia/liczbaPozostalychDawek", pozostaleDawki);
 }
 
-// ---------------
-void wysylPoziom(int value){
-  Firebase.setInt("/Ustawienia/czasSpania", value);
-}
-
-
-void wysylAlarm(int value){
-  Firebase.setInt("/Ustawienia/najblizszyAlarm", value);
-}
-//-----------------
-
 void pobranieAlarmu(){
   // łączenie z wifi
   wifiConnect();
@@ -320,8 +267,6 @@ void pobranieAlarmu(){
     }
   }
   zapiszRTC();
-  Serial.println(pamiec_RTC.nastepnyAlarm);
-  wysylAlarm(pamiec_RTC.nastepnyAlarm);
 }
 
 void czytajRTC(){
