@@ -1,5 +1,48 @@
 <resources>
-    <string name="app_name">RobotDoWydawaniaLekow</string>
+    <string name="app_name">Robot Do Wydawania Lekow</string>
+    <string name="mainPage">Strona Główna</string>
     <string name="settings">Ustawienia</string>
-    <string name="full_list">Pełna lista</string>
+    <string name="full_list">Rozszerzona lista</string>
+    <string name="ostatnieAlarmy">Ostatnie alarmy</string>
+    <string name="uzupelnienie">Uzupełnienie pojemniczków</string>
+    <string name="ustawienia1">Dzienna liczba dawek</string>
+    <string name="ustawienia2">Godzina alarmu pierwszego</string>
+    <string name="ustawienia3">Godzina alarmu drugiego (opcjonalne)</string>
+    <string name="ustawienia4">Godzina alarmu trzeciego (opcjonalne)</string>
+    <string name="bottonZapisz">Zapisz</string>
+    <string name="ileDawek">Liczba pozostałych dawek: </string>
+    <string name="liczba">  /15</string>
+
+    <string-array name="liczba">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="godziny">
+        <item>0:00</item>
+        <item>1:00</item>
+        <item>2:00</item>
+        <item>3:00</item>
+        <item>4:00</item>
+        <item>5:00</item>
+        <item>6:00</item>
+        <item>7:00</item>
+        <item>8:00</item>
+        <item>9:00</item>
+        <item>10:00</item>
+        <item>11:00</item>
+        <item>12:00</item>
+        <item>13:00</item>
+        <item>14:00</item>
+        <item>15:00</item>
+        <item>16:00</item>
+        <item>17:00</item>
+        <item>18:00</item>
+        <item>19:00</item>
+        <item>20:00</item>
+        <item>21:00</item>
+        <item>22:00</item>
+        <item>23:00</item>
+    </string-array>
 </resources>
