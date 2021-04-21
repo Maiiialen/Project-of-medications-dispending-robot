@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Robot Do Wydawania Lekow</string>
+    <string name="app_name">Robot Do Wydawania Medykamentów</string>
     <string name="mainPage">Strona Główna</string>
     <string name="settings">Ustawienia</string>
     <string name="full_list">Rozszerzona lista</string>
