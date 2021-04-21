@@ -4,10 +4,10 @@
 #include <DS3231.h>
 #include "PCF8574.h"
 
-#define WIFI_NAZWA "nazwa"
-#define WIFI_HASLO "haslo"
-#define FIREBASE_BAZA "cos.firebaseio.com"
-#define FIREBASE_KLUCZ "klucz"
+#define WIFI_NAZWA "name"
+#define WIFI_HASLO "password"
+#define FIREBASE_BAZA "name.firebaseio.com"
+#define FIREBASE_KLUCZ "key"
 
 #define CZAS_SPANIA_60 3600        // godzina 60*60 = 3600 sekund
 #define CZAS_SPANIA_45 2700
@@ -43,10 +43,6 @@ void wylaczAlarm();
 void setup(){
   // inicjalizacja ekspandera
   ekspander.begin();
-
-  //pinMode(A0, INPUT);
-  pinMode(2, OUTPUT);
-  digitalWrite(2, LOW);
 
   ekspander.write(0, LOW);    // buzzer
   ekspander.write(1, LOW);    // dioda
